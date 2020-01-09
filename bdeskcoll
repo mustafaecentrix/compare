@@ -316,7 +316,7 @@ CREATE TABLE `acs_case_base_od` (
   `insert_time` datetime DEFAULT NULL,
   `yearmonth` varchar(6) DEFAULT NULL,
   `due_date_last` date DEFAULT NULL,
-  PRIMARY KEY (`contract_number`),
+  PRIMARY KEY (`contract_number`,`customer_id`),
   KEY `contract_number_idx` (`contract_number`),
   KEY `last_call_status_idx` (`last_call_status`),
   KEY `last_call_status_agent_idx` (`last_call_status_agent`),
@@ -352,7 +352,7 @@ CREATE TABLE `acs_case_base_od_history` (
   `insert_time` datetime DEFAULT NULL,
   `yearmonth` varchar(6) NOT NULL,
   `due_date_last` date DEFAULT NULL,
-  PRIMARY KEY (`contract_number`,`customer_id`,`yearmonth`),
+  PRIMARY KEY (`contract_number`,`yearmonth`),
   KEY `contract_number_idx` (`contract_number`),
   KEY `last_call_status_idx` (`last_call_status`),
   KEY `last_call_status_agent_idx` (`last_call_status_agent`),
@@ -433,7 +433,7 @@ CREATE TABLE `acs_case_base_reminder` (
   KEY `last_month_status_idx` (`last_month_status`),
   KEY `insert_time_idx` (`insert_time`),
   KEY `yearmonth_idx` (`yearmonth`),
-  KEY `due_ate_last_idx` (`due_date_last`)
+  KEY `due_date_last_idx` (`due_date_last`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `acs_case_base_reminder_history` (
   `contract_number` varchar(32) NOT NULL,
@@ -460,7 +460,7 @@ CREATE TABLE `acs_case_base_reminder_history` (
   `insert_time` datetime DEFAULT NULL,
   `yearmonth` varchar(6) NOT NULL,
   `due_date_last` date DEFAULT NULL,
-  PRIMARY KEY (`contract_number`,`customer_id`,`yearmonth`),
+  PRIMARY KEY (`contract_number`,`yearmonth`),
   KEY `contract_number_idx` (`contract_number`),
   KEY `last_call_status_idx` (`last_call_status`),
   KEY `last_call_status_agent_idx` (`last_call_status_agent`),
@@ -510,7 +510,8 @@ CREATE TABLE `acs_class_call_result_cycle` (
   KEY `total_contracts_idx` (`total_contracts`),
   KEY `contact_type_idx` (`contact_type`),
   KEY `cycle_idx` (`cycle`),
-  KEY `idx_02` (`class_id`,`call_result`,`contact_type`,`cycle`,`created_time`)
+  KEY `idx_02` (`class_id`,`call_result`,`contact_type`,`cycle`,`created_time`),
+  KEY `idx_created_time` (`created_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `acs_class_call_result_cycle_history` (
   `class_id` varchar(32) NOT NULL,
@@ -883,12 +884,12 @@ CREATE TABLE `acs_dialing_mode_call_status` (
   `call_priority_8` tinyint(4) DEFAULT '8',
   `call_per_cycle` tinyint(4) DEFAULT '8',
   `max_req_visit` int(11) DEFAULT '0',
-  `user_context` varchar(32) DEFAULT NULL,
+  `user_context` varchar(32) DEFAULT 'ecentrix-deskcoll-smg',
   `table_name` varchar(255) DEFAULT NULL,
   `where_condition` text,
   `order_by` text,
   KEY `class_id` (`class_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 CREATE TABLE `acs_exclude_account` (
   `contract_number` varchar(32) NOT NULL,
   `valid_until` date NOT NULL,
@@ -1017,14 +1018,14 @@ CREATE TABLE `acs_predictive_queue` (
   `appointment_status` tinyint(3) DEFAULT '0',
   `score` int(11) unsigned DEFAULT '0',
   `created_datetime` datetime DEFAULT NULL,
-  `handPhone1` varchar(30) NOT NULL,
-  `handPhone2` varchar(30) NOT NULL,
-  `homePhone1` varchar(30) NOT NULL,
-  `homePhone2` varchar(30) NOT NULL,
-  `officePhone3` varchar(30) NOT NULL,
-  `officePhone2` varchar(30) NOT NULL,
-  `businessPhone1` varchar(30) NOT NULL,
-  `businessPhone2` varchar(30) NOT NULL,
+  `handPhone1` varchar(30) DEFAULT NULL,
+  `handPhone2` varchar(30) DEFAULT NULL,
+  `homePhone1` varchar(30) DEFAULT NULL,
+  `homePhone2` varchar(30) DEFAULT NULL,
+  `officePhone3` varchar(30) DEFAULT NULL,
+  `officePhone2` varchar(30) DEFAULT NULL,
+  `businessPhone1` varchar(30) DEFAULT NULL,
+  `businessPhone2` varchar(30) DEFAULT NULL,
   `appointment_datetime` datetime DEFAULT NULL,
   `prefix_handp1` tinyint(1) DEFAULT '0',
   `prefix_handp2` tinyint(1) DEFAULT '0',
@@ -1035,7 +1036,7 @@ CREATE TABLE `acs_predictive_queue` (
   `prefix_bussines1` tinyint(1) DEFAULT '0',
   `prefix_bussines2` tinyint(1) DEFAULT '0',
   `cycle` tinyint(2) DEFAULT '0',
-  `officePhone1` varchar(30) NOT NULL,
+  `officePhone1` varchar(30) DEFAULT NULL,
   `ptp_date` date DEFAULT NULL,
   `flag_multigroup` varchar(1) DEFAULT NULL,
   `group_number` varchar(15) DEFAULT NULL,
@@ -1202,8 +1203,7 @@ CREATE TABLE `acs_user` (
   `updated_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `group_id` (`group_id`),
-  KEY `user_id` (`id`) USING BTREE,
-  KEY `contract_number_handling_idx` (`contract_number_handling`)
+  KEY `user_id` (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 CREATE TABLE `acs_user_log` (
   `id` varchar(32) NOT NULL,
